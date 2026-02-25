@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	yooerror "github.com/rvinnie/yookassa-sdk-go/yookassa/errors"
 	yoorefund "github.com/rvinnie/yookassa-sdk-go/yookassa/refund"
@@ -74,7 +75,7 @@ func (r *RefundHandler) CreateRefund(ctx context.Context, refund *yoorefund.Refu
 
 // FindRefund find a refund by ID returns the Refund entity.
 func (r *RefundHandler) FindRefund(ctx context.Context, id string) (*yoorefund.Refund, error) {
-	endpoint := fmt.Sprintf("%s/%s", RefundEndpoint, id)
+	endpoint := fmt.Sprintf("%s/%s", RefundEndpoint, url.PathEscape(id))
 
 	resp, err := r.client.MakeRequest(ctx, http.MethodGet, endpoint, nil, nil, r.idempotencyKey)
 	if err != nil {

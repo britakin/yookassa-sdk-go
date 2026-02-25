@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	yooerror "github.com/rvinnie/yookassa-sdk-go/yookassa/errors"
 	yoopayment "github.com/rvinnie/yookassa-sdk-go/yookassa/payment"
@@ -42,7 +43,7 @@ func (p *PaymentHandler) CapturePayment(ctx context.Context, payment *yoopayment
 		return nil, err
 	}
 
-	captureRequest := fmt.Sprintf("%s/%s/%s", PaymentEndpoint, payment.ID, CaptureEndpoint)
+	captureRequest := fmt.Sprintf("%s/%s/%s", PaymentEndpoint, url.PathEscape(payment.ID), CaptureEndpoint)
 
 	resp, err := p.client.MakeRequest(
 		ctx,
@@ -78,7 +79,7 @@ func (p *PaymentHandler) CapturePayment(ctx context.Context, payment *yoopayment
 
 // CancelPayment cancel payment by ID.
 func (p *PaymentHandler) CancelPayment(ctx context.Context, paymentId string) (*yoopayment.Payment, error) {
-	cancelRequest := fmt.Sprintf("%s/%s/%s", PaymentEndpoint, paymentId, CancelEndpoint)
+	cancelRequest := fmt.Sprintf("%s/%s/%s", PaymentEndpoint, url.PathEscape(paymentId), CancelEndpoint)
 
 	resp, err := p.client.MakeRequest(ctx, http.MethodPost, cancelRequest, nil, nil, p.idempotencyKey)
 	if err != nil {
@@ -160,7 +161,7 @@ func (p *PaymentHandler) CreatePaymentLink(ctx context.Context, payment *yoopaym
 
 // FindPayment find a payment by ID returns the Payment entity.
 func (p *PaymentHandler) FindPayment(ctx context.Context, id string) (*yoopayment.Payment, error) {
-	endpoint := fmt.Sprintf("%s/%s", PaymentEndpoint, id)
+	endpoint := fmt.Sprintf("%s/%s", PaymentEndpoint, url.PathEscape(id))
 
 	resp, err := p.client.MakeRequest(ctx, http.MethodGet, endpoint, nil, nil, p.idempotencyKey)
 	if err != nil {

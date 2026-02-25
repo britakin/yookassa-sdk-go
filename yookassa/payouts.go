@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"net/url"
 
 	yooerror "github.com/rvinnie/yookassa-sdk-go/yookassa/errors"
 	yoopayout "github.com/rvinnie/yookassa-sdk-go/yookassa/payout"
@@ -98,7 +99,7 @@ func (p *PayoutHandler) CreatePayout(ctx context.Context, payout *yoopayout.Payo
 }
 
 func (p *PayoutHandler) GetPayout(ctx context.Context, payoutId string) (*yoopayout.Payout, error) {
-	endpoint := PayoutsEndpoint + "/" + payoutId
+	endpoint := PayoutsEndpoint + "/" + url.PathEscape(payoutId)
 	resp, err := p.client.MakeRequest(ctx, "GET", endpoint, nil, nil, p.idempotencyKey)
 	if err != nil {
 		return nil, err
